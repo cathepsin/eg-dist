@@ -1,5 +1,6 @@
 class ProteinSequence:
     #Store data about a protein from a .pdb and a .socket
+    #Just testing something
     class Atom:
         def __init__(self, num, coord, tag, ele):
             self.num = num

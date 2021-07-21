@@ -1,5 +1,8 @@
 from prody import *
 from pylab import *
+import tkinter as tk
+import Sequence
+from tkinter.filedialog import askopenfilename
 
 import sys
 
@@ -17,20 +20,32 @@ def fStobS(fp):
 
     return retFP
 
-filepath = input("Input file path to .pdb file ")
+def CutPath(str):
+    #Cuts the file path from a file name
+    retStr = str
+    while retStr.find('/') != -1:
+        retStr = retStr[retStr.find('/') + 1:]
+    return retStr
+
+root = tk.Tk()
+root.withdraw()
+
+f_pdb = askopenfilename(title="Select a .pdb file", filetypes=[('Protein Database File', '*.pdb')])
 try:
-    f = open(filepath)
-except (FileNotFoundError, OSError):
-    filepath = fStobS(filepath)
-    try:
-        f = open(filepath)
-    except (FileNotFoundError, OSError):
-        sys.stderr.write("File not found. Make sure your file is at the correct location and is a .pdb\nAborted")
-        sys.exit(1) #Abort
+    f_p = open(f_pdb)
+except FileNotFoundError:
+    sys.exit("Must select a file")
 
+pmt = "Select associated .socket file for " + CutPath(f_pdb)
+f_sock = askopenfilename(title=pmt, filetypes=[('Socket File', '*.socket')])
+try:
+    f_s = open(f_sock)
+except FileNotFoundError:
+    sys.exit("Must select a file")
 
-
-protein = prody.parsePDBStream(f)
-prody.showProtein(protein)
+protSeq = Sequence.ProteinSequence()
+protSeq.parsePDB(f_p)
 print("wow")
+
+
 

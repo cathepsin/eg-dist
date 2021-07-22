@@ -1,0 +1,140 @@
+﻿{
+  "Arginine": {
+    "1code": "R",
+    "3code": "Arg",
+    "Charge": "+",
+    "Polarity": "Polar"
+  },
+  "Histidine": {
+    "1code": "H",
+    "3code": "His",
+    "Charge": "+",
+    "Polarity": "Polar"
+  },
+  "Lysine": {
+    "1code": "K",
+    "3code": "Lys",
+    "Charge": "+",
+    "Polarity": "Polar"
+  },
+  "Aspartate": {
+    "1code": "D",
+    "3code": "Asp",
+    "Charge": "-",
+    "Polarity": "Polar"
+  },
+  "Aspartic Acid": {
+    "1code": "D",
+    "3code": "Asp",
+    "Charge": "-",
+    "Polarity": "Polar"
+  },
+  "Glutamate": {
+    "1code": "E",
+    "3code": "Glu",
+    "Charge": "-",
+    "Polarity": "Polar"
+  },
+  "Glutamic Acid": {
+    "1code": "E",
+    "3code": "Glu",
+    "Charge": "-",
+    "Polarity": "Polar"
+  },
+  "Serine": {
+    "1code": "S",
+    "3code": "Ser",
+    "Charge": "NULL",
+    "Polarity": "Polar"
+  },
+  "Threonine": {
+    "1code": "T",
+    "3code": "Thr",
+    "Charge": "NULL",
+    "Polarity": "Polar"
+  },
+  "Asparagine": {
+    "1code": "N",
+    "3code": "Asn",
+    "Charge": "NULL",
+    "Polarity": "Polar"
+  },
+  "Glutamine": {
+    "1code": "Q",
+    "3code": "Gln",
+    "Charge": "NULL",
+    "Polarity": "Polar"
+  },
+  "Cysteine": {
+    "1code": "C",
+    "3code": "Cys",
+    "Charge": "NULL",
+    "Polarity": "Polar"
+  },
+  "Selenocysteine": {
+    "1code": "U",
+    "3code": "Sec",
+    "Charge": "NULL",
+    "Polarity": "Polar"
+  },
+  "Glycine": {
+    "1code": "G",
+    "3code": "Gly",
+    "Charge": "NULL",
+    "Polarity": "Nonpolar"
+  },
+  "Proline": {
+    "1code": "P",
+    "3code": "Pro",
+    "Charge": "NULL",
+    "Polarity": "Nonpolar"
+  },
+  "Alanine": {
+    "1code": "A",
+    "3code": "Ala",
+    "Charge": "NULL",
+    "Polarity": "Nonpolar"
+  },
+  "Valine": {
+    "1code": "V",
+    "3code": "Val",
+    "Charge": "NULL",
+    "Polarity": "Nonpolar"
+  },
+  "Isoleucine": {
+    "1code": "I",
+    "3code": "Iso",
+    "Charge": "NULL",
+    "Polarity": "Nonpolar"
+  },
+  "Leucine": {
+    "1code": "L",
+    "3code": "Leu",
+    "Charge": "NULL",
+    "Polarity": "Nonpolar"
+  },
+  "Methionine": {
+    "1code": "M",
+    "3code": "Met",
+    "Charge": "NULL",
+    "Polarity": "Nonpolar"
+  },
+  "Phenylalanine": {
+    "1code": "F",
+    "3code": "Phe",
+    "Charge": "NULL",
+    "Polarity": "Nonpolar"
+  },
+  "Tyrosine": {
+    "1code": "Y",
+    "3code": "Tyr",
+    "Charge": "NULL",
+    "Polarity": "Nonpolar"
+  },
+  "Tryptophan": {
+    "1code": "W",
+    "3code": "Trp",
+    "Charge": "NULL",
+    "Polarity": "Nonpolar"
+  }
+}

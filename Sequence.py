@@ -1,3 +1,5 @@
+import json
+
 class ProteinSequence:
     #Store data about a protein from a .pdb and a .socket
     class Atom:
@@ -18,6 +20,12 @@ class ProteinSequence:
         self.sequence = []
         print("Making this guy!")
 
+    def cleanLargeTag(self, str):
+        #If an atomID is 4+ characters (as in ATOM#93 for PDB: 5u59), str.split() will not work as intended
+        lst = str.split()
+
+
+
     def parsePDB(self, file):
         currNum = -1
         currName = ""
@@ -27,6 +35,8 @@ class ProteinSequence:
                 spl = line.split()
                 #Parse atomic data
                 num = spl[1]
+                if num == '93':
+                    print("stop here")
                 tag = spl[2]
                 resNum = spl[5]
                 if currNum == -1:

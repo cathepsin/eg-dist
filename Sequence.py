@@ -18,12 +18,40 @@ class ProteinSequence:
 
     def __init__(self):
         self.sequence = []
-        print("Making this guy!")
+        self.AAs = {
+            "ARG" : "Arginine",
+            "HIS" : "Histidine",
+            "LYS" : "Lysine",
+            "ASP" : "Aspartic Acid",
+            "GLU" : "Glutamic Acid",
+            "SER" : "Serine",
+            "THR" : "Threonine",
+            "ASN" : "Asparagine",
+            "GLN" : "Glutamine",
+            "CYS" : "Cysteine",
+            "SEC" : "Selenocysteine",
+            "GLY" : "Glycine",
+            "PRO" : "Proline",
+            "ALA" : "Alanine",
+            "VAL" : "Valine",
+            "ISO" : "Isoleucine",
+            "LEU" : "Leucine",
+            "MET" : "Methionine",
+            "PHE" : "Phenylalanine",
+            "TYR" : "Tyrosine",
+            "TRP" : "Tryptophan"
+        }
 
     def cleanLargeTag(self, str):
         #If an atomID is 4+ characters (as in ATOM#93 for PDB: 5u59), str.split() will not work as intended
         lst = str.split()
-
+        print(lst[2][:4])
+        print(lst[2][4:])
+        retlst = lst.copy()
+        retlst.insert(2,lst[2][:4])
+        retlst.insert(3,lst[2][4:])
+        retlst.remove(retlst[4])
+        return retlst
 
 
     def parsePDB(self, file):
@@ -33,10 +61,10 @@ class ProteinSequence:
         for line in file:
             if line.find("ATOM") == 0:
                 spl = line.split()
+                if len(spl[2]) > 4:
+                    spl = self.cleanLargeTag(line)
                 #Parse atomic data
                 num = spl[1]
-                if num == '93':
-                    print("stop here")
                 tag = spl[2]
                 resNum = spl[5]
                 if currNum == -1:

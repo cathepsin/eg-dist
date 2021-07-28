@@ -67,7 +67,6 @@ class ProteinSequence:
 
     #Takes the original ATOM line (string) and splits the occupancy and bfactor correctly
     def cleanLargeBFactor(self, str):
-        print(str)
         lst = str.split()
         retlst = lst.copy()
         retlst.insert(9,lst[9][:4])
@@ -97,15 +96,15 @@ class ProteinSequence:
         for line in file:
             if line.find("ATOM") == 0:
                 spl = self.strToList(line)
+                resNum = spl[5]
                 if currResNum == -1:
                     #Not all files start at residue 0 or 1. This ensures correct starting position
                     currResNum = resNum
 
                 #Check if the current ATOM is on a new residue
-                resNum = spl[5]
                 if resNum != currResNum:
                     #Found the next residue, so save previously recorded data as an AminoAcid
-                    self.sequence.append(self.AminoAcid(currNum, atomGroup.copy(), residue, chain))
+                    self.sequence.append(self.AminoAcid(currResNum, atomGroup.copy(), residue, chain))
                     currResNum = resNum
                     atomGroup.clear()
                 #Parse ATOM data
@@ -121,4 +120,4 @@ class ProteinSequence:
                 newAtom = self.Atom(num, coordinates, tag, occupancy, bfactor, element)
                 atomGroup.append(newAtom)
         #Save the final AminoAcid instance
-        self.sequence.append(self.AminoAcid(currNum, atomGroup.copy(), residue, chain))
+        self.sequence.append(self.AminoAcid(currResNum, atomGroup.copy(), residue, chain))

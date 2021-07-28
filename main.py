@@ -2,8 +2,8 @@ from prody import *
 from pylab import *
 import tkinter as tk
 import Sequence
+import Chain
 from tkinter.filedialog import askopenfilename
-
 import sys
 
 ion()
@@ -46,7 +46,8 @@ except FileNotFoundError:
 
 protSeq = Sequence.ProteinSequence()
 protSeq.parsePDB(f_p)
-print(protSeq.GetAtomDist(protSeq.sequence[14].atoms[1], protSeq.sequence[128].atoms[1]))
+seqChains = Chain.Chain(protSeq)
+#print(protSeq.GetAtomDist(protSeq.sequence[14].atoms[1], protSeq.sequence[128].atoms[1]))
 print("Done")
 
 

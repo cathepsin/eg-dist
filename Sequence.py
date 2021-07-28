@@ -21,29 +21,6 @@ class ProteinSequence:
 
     def __init__(self):
         self.sequence = []
-        # self.AAs = {
-        #     "ARG" : "Arginine",
-        #     "HIS" : "Histidine",
-        #     "LYS" : "Lysine",
-        #     "ASP" : "Aspartic Acid",
-        #     "GLU" : "Glutamic Acid",
-        #     "SER" : "Serine",
-        #     "THR" : "Threonine",
-        #     "ASN" : "Asparagine",
-        #     "GLN" : "Glutamine",
-        #     "CYS" : "Cysteine",
-        #     "SEC" : "Selenocysteine",
-        #     "GLY" : "Glycine",
-        #     "PRO" : "Proline",
-        #     "ALA" : "Alanine",
-        #     "VAL" : "Valine",
-        #     "ISO" : "Isoleucine",
-        #     "LEU" : "Leucine",
-        #     "MET" : "Methionine",
-        #     "PHE" : "Phenylalanine",
-        #     "TYR" : "Tyrosine",
-        #     "TRP" : "Tryptophan"
-        # }
 
     #Split an ATOM line into a list
     def strToList(self, str):

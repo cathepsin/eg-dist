@@ -1,9 +1,6 @@
-import Sequence
-
 class Chain:
     def __init__(self, sequence):
         self.chains = self.MakeChains(sequence)
-
 
     def MakeChains(self, sequence):
         chains = dict()

@@ -30,7 +30,8 @@ def CutPath(str):
 root = tk.Tk()
 root.withdraw()
 
-f_pdb = askopenfilename(title="Select a .pdb file", filetypes=[('Protein Database File', '*.pdb')])
+f_pdb = askopenfilename(title="Select a .pdb file", filetypes=[('Protein Database File', '*.pdb')
+                                                               ,('Protein Database File (old)', '*.ent')])
 try:
     f_p = open(f_pdb)
 except FileNotFoundError:
@@ -45,7 +46,8 @@ except FileNotFoundError:
 
 protSeq = Sequence.ProteinSequence()
 protSeq.parsePDB(f_p)
-print("wow")
+print(protSeq.GetAtomDist(protSeq.sequence[14].atoms[1], protSeq.sequence[128].atoms[1]))
+print("Done")
 
 
 

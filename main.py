@@ -1,6 +1,7 @@
 import tkinter as tk
 import Sequence
 import Chain
+import ResidueCentroid
 import sys
 from tkinter.filedialog import askopenfilename
 
@@ -39,6 +40,9 @@ except FileNotFoundError:
 protSeq = Sequence.ProteinSequence()
 protSeq.parsePDB(f_p)
 seqChains = Chain.Chain(protSeq)
+centroid = ResidueCentroid.CentroidFinder()
+for prot in protSeq.sequence:
+    centroid.GetCentroid(prot)
 
 pmt = "Select associated .socket file for " + CutPath(f_pdb)
 f_sock = askopenfilename(title=pmt, filetypes=[('Socket File', '*.socket')])

@@ -1,13 +1,18 @@
 class ProteinSequence:
     #Extract all ATOM lines from a .pdb (or .ent) file. Data is stored as Atoms, AminoAcids
     class Atom:#Class to store information about an individual atom
-        def __init__(self, num, coord, tag, occ, bf, ele):
+        def __init__(self, num, coord, tag, res, ch, occ, bf, ele):
             self.num = num
             self.location = coord
             self.id = tag
             self.occupancy = occ
             self.bfactor = bf
             self.element = ele
+            self.residue = res
+            self.chain = ch
+
+        def __repr__(self):
+            return f"ATOM: Number: {self.num}, Tag: {self.id}, Residue: {self.residue}, Chain: {self.chain}, Coordinates: {self.location}, Occupancy: {self.occupancy}, B_Factor: {self.bfactor}, Element: {self.element}"
 
     class AminoAcid:#Class to store information about a whole residue
         def __init__(self, numb, atomList, cName, ch):
@@ -68,12 +73,11 @@ class ProteinSequence:
     #Each residue is placed in the order they appear in the .pdb/.ent file
     def parsePDB(self, file):
         currResNum = -1
-        currName = ""
         atomGroup = []
         for line in file:
             if line.find("ATOM") == 0:
                 spl = self.strToList(line)
-                resNum = spl[5]
+                resNum = (line[22:27])
                 if currResNum == -1:
                     #Not all files start at residue 0 or 1. This ensures correct starting position
                     currResNum = resNum
@@ -85,16 +89,22 @@ class ProteinSequence:
                     currResNum = resNum
                     atomGroup.clear()
                 #Parse ATOM data
-                num = spl[1]
-                tag = spl[2]
-                residue = spl[3]
-                chain = spl[4]
-                coordinates = [float(spl[6]),float(spl[7]),float(spl[8])]
-                occupancy = spl[9]
-                bfactor = spl[10]
-                element = spl[11]
+                num = (line[4:11]).strip()
+                tag = line[11:16].strip()
+                residue = line[16:20].strip()
+                chain = line[20:22].strip()
+                coordinates = [float(line[27:38]),float(line[38:46]),float(line[46:55])]
+                occupancy = float(line[55:60])
+                bfactor = float(line[60:73])
+                element = line[73:].strip()
                 #Save atom
-                newAtom = self.Atom(num, coordinates, tag, occupancy, bfactor, element)
+                newAtom = self.Atom(num, coordinates, tag, residue, chain, occupancy, bfactor, element)
                 atomGroup.append(newAtom)
+                print(newAtom)
         #Save the final AminoAcid instance
         self.sequence.append(self.AminoAcid(currResNum, atomGroup.copy(), residue, chain))
+
+
+#ATOM   1895  CB  ILE B 954      32.149   7.481 198.133  1.00 89.00           C
+#ATOM      1  N   VAL A   1       6.204  16.869   4.854  1.00 49.05           N
+#0-4| 4-11 |11-16|16-20|20-22|22-27|27-38|38-46|46-55|  55-60|  60-73| 73-end

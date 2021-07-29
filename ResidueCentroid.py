@@ -26,6 +26,7 @@ class CentroidFinder:
             "TYR": ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH'],
             "TRP": ['CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2']
         }
+        self.stored = []
 
     def GetCentroid(self, residue):
         x = 0

@@ -1,6 +1,7 @@
 import tkinter as tk
 import Sequence
 import Chain
+import sys
 from tkinter.filedialog import askopenfilename
 
 
@@ -29,7 +30,7 @@ root = tk.Tk()
 root.withdraw()
 
 f_pdb = askopenfilename(title="Select a .pdb file", filetypes=[('Protein Database File', '*.pdb')
-    , ('Protein Database File (old)', '*.ent')])
+    ,('Protein Database File (old)', '*.ent')])
 try:
     f_p = open(f_pdb)
 except FileNotFoundError:
@@ -38,7 +39,6 @@ except FileNotFoundError:
 protSeq = Sequence.ProteinSequence()
 protSeq.parsePDB(f_p)
 seqChains = Chain.Chain(protSeq)
-
 
 pmt = "Select associated .socket file for " + CutPath(f_pdb)
 f_sock = askopenfilename(title=pmt, filetypes=[('Socket File', '*.socket')])

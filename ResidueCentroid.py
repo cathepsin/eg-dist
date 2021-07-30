@@ -39,8 +39,9 @@ class CentroidFinder:
                 x = x + atom.location[0]
                 y = y + atom.location[1]
                 z = z + atom.location[2]
+        ##TODO Some amino acids are mislabled, such as residue 1340 for pdb 1PL5. In the file, it is listed as a LYS, but it has only tags for ALA
         x = x / n
         y = y / n
         z = z / n
 
-        return [x, y, z]
+        return residue, [x, y, z]

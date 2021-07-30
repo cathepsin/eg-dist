@@ -2,6 +2,7 @@ import Sequence
 import Chain
 import ResidueCentroid
 import HeptadRepeat
+import EGDist
 import FPTools as fpt
 import tkinter as tk
 import sys
@@ -35,5 +36,7 @@ except FileNotFoundError:
 heptad = HeptadRepeat.Heptad()
 heptad.ParseSocket(f_s)
 
+distances = EGDist.EGDist()
+distances.GetDistances(protSeq.sequence, seqChains, rCentroids, heptad)
 # print(protSeq.GetAtomDist(protSeq.sequence[14].atoms[1], protSeq.sequence[128].atoms[1]))
 print("Done")

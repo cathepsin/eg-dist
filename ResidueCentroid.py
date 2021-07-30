@@ -43,7 +43,8 @@ class CentroidFinder:
             print("Uh oh! Somebody made a bad file! ", residue.residue, "-->", resName , "(", residue.num,")")
         elif resName == "Unknown residue":
             print("Unknown residue")
-            #TODO Add another check to get the correct residue. Until then, return -1
+            #TODO Add another check to get the correct residue. Until then, return -1. Sometimes a center atom (Xele) is included (pdb 1EK9 ATOM#6613)
+            #TODO Add check for rotomers (pdb 5U59 residue 9)
             return residue, [-1,-1,-1]
         for atom in residue.atoms:
             if atom.id in self.AAs[resName]:

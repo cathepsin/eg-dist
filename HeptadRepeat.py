@@ -28,15 +28,17 @@ class Heptad:
     def ParseSocket(self, file):
         rFile = file.readlines()
         i = 0
-        while i < len(rFile) or rFile[i] == "Finished":
+        while i < len(rFile):
             if rFile[i].find("assigning heptad to helix") == 0:
                 paragraph = ""
-                while rFile[i] != "\n" or rFile[i] == "Finished":
+                while rFile[i] != "\n":
                     paragraph += rFile[i]
+                    if rFile[i].strip() == "Finished":
+                        break
                     i += 1
 
+                print(paragraph)
 
-            if rFile[i] == "Finished":
+            if rFile[i].strip() == "Finished":
                 break
             i += 1
-

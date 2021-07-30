@@ -42,3 +42,4 @@ class Heptad:
             if rFile[i].strip() == "Finished":
                 break
             i += 1
+

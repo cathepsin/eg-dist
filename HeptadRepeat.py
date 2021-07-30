@@ -57,3 +57,10 @@ class Heptad:
         lines[3] = lines[3].replace(' ', '-').replace('-',' ',1)
         register = lines[3].split()[1]
         return chain, range, sequence, register
+
+    def GetList(self):
+        return self.AAs
+
+def OneToThree(AA):
+    object = Heptad()
+    return object.GetList()[AA]

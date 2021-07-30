@@ -12,7 +12,9 @@ class ProteinSequence:
             self.chain = ch
 
         def __repr__(self):
-            return f"ATOM: Number: {self.num}, Tag: {self.id}, Residue: {self.residue}, Chain: {self.chain}, Coordinates: {self.location}, Occupancy: {self.occupancy}, B_Factor: {self.bfactor}, Element: {self.element}"
+            return f"ATOM: NUMBER: {self.num}, TAG: {self.id}, RESIDUE: {self.residue}, CHAIN: {self.chain}, COORDINATES: {self.location}, OCCUPANCY: {self.occupancy}, B_FACTOR: {self.bfactor}, ELEMENT: {self.element}"
+        def __str__(self):
+            return f"{self.id} {self.residue} {self.location}"
 
     class AminoAcid:#Class to store information about a whole residue
         def __init__(self, numb, atomList, cName, ch):
@@ -23,6 +25,12 @@ class ProteinSequence:
 
         def __lt__(self, other):
             return self.num < other.num
+
+        def __repr__(self):
+            return f"RESIDUE: {self.residue}, NUMBER: {self.num}, CHAIN: {self.chain}"
+
+        def __str__(self):
+            return f"{self.residue} {self.num} {self.chain}"
 
     def __init__(self):
         self.sequence = []
@@ -77,7 +85,7 @@ class ProteinSequence:
         for line in file:
             if line.find("ATOM") == 0:
                 spl = self.strToList(line)
-                resNum = (line[22:27])
+                resNum = float(line[22:27])
                 if currResNum == -1:
                     #Not all files start at residue 0 or 1. This ensures correct starting position
                     currResNum = resNum
@@ -89,7 +97,7 @@ class ProteinSequence:
                     currResNum = resNum
                     atomGroup.clear()
                 #Parse ATOM data
-                num = (line[4:11]).strip()
+                num = float(line[4:11])
                 tag = line[11:16].strip()
                 residue = line[16:20].strip()
                 chain = line[20:22].strip()
@@ -100,7 +108,7 @@ class ProteinSequence:
                 #Save atom
                 newAtom = self.Atom(num, coordinates, tag, residue, chain, occupancy, bfactor, element)
                 atomGroup.append(newAtom)
-                print(newAtom)
+                #print(newAtom)
         #Save the final AminoAcid instance
         self.sequence.append(self.AminoAcid(currResNum, atomGroup.copy(), residue, chain))
 

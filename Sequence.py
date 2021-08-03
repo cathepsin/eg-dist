@@ -64,19 +64,6 @@ class ProteinSequence:
         retlst.remove(retlst[11])
         return retlst
 
-    # def GetAtomDist(self, atom1, atom2):
-    #     x_term = (atom1.location[0] - atom2.location[0]) ** 2
-    #     y_term = (atom1.location[1] - atom2.location[1]) ** 2
-    #     z_term = (atom1.location[2] - atom2.location[2]) ** 2
-    #     return math.sqrt(x_term + y_term + z_term)
-
-    # def SplitChains(self):
-    #     chainset = {}
-    #     setLength = len(chainset)
-    #     for val in self.sequence:
-    #         prevLen = len(chainset)
-    #         chainset.add(val.chain)
-
     #Parses a .pdb or .ent file. Returns an AA sequence.
     #Each residue is placed in the order they appear in the .pdb/.ent file
     def parsePDB(self, file):

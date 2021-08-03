@@ -21,6 +21,8 @@ except FileNotFoundError:
 protSeq = Sequence.ProteinSequence()
 protSeq.parsePDB(f_p)
 seqChains = Chain.Chain(protSeq)
+f_p.seek(0)
+seqChains.Symmetry(f_p, protSeq)
 centroid = ResidueCentroid.CentroidFinder()
 rCentroids = []
 for aa in protSeq.sequence:

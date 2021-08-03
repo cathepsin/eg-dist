@@ -1,4 +1,6 @@
 import collections
+
+
 class CentroidFinder:
     def __init__(self):
         # Using the .pdb/.ent tag encodings, all atoms besides alpha/beta carbons are considered when finding a centroid
@@ -35,17 +37,15 @@ class CentroidFinder:
         z = 0
         n = 0
         # Because, unfortunately, some pdb files have incorrectly labled residues, we must check (as in residue 1340 in 1PL5)
-        #This causes the method to be relatively slow, but ensures correctness
+        # This causes the method to be relatively slow, but ensures correctness
         if residue.num == 428:
             print("stopping")
         resName = self.CheckResidue(residue)
         if resName != residue.residue and resName != "Unknown residue":
-            print("Uh oh! Somebody made a bad file! ", residue.residue, "-->", resName , "(", residue.num,")")
+            print("Uh oh! Somebody made a bad file! ", residue.residue, "-->", resName, "(", residue.num, ")")
         elif resName == "Unknown residue":
             print("Unknown residue")
-            #TODO Add another check to get the correct residue. Until then, return -1. Sometimes a center atom (Xele) is included (pdb 1EK9 ATOM#6613)
-            #TODO Add check for rotomers (pdb 5U59 residue 9)
-            return residue, [-1,-1,-1]
+            return residue, [-1, -1, -1]
         for atom in residue.atoms:
             if atom.id in self.AAs[resName]:
                 n = n + 1
@@ -60,15 +60,24 @@ class CentroidFinder:
 
     def CheckResidue(self, res):
         checkList = []
+        addList = []
+        if res.num == 428:
+            print("stop")
+        if len(res.rotation.keys()) > 0:
+            keyList = list(res.rotation.keys())
+            for atom in res.rotation[keyList[0]]:
+                addList.append(atom.id)
         for atom in res.atoms:
             checkList.append(atom.id)
-        if collections.Counter(['N','CA','C','O']) == collections.Counter(checkList):
+        if collections.Counter(['N', 'CA', 'C', 'O']) == collections.Counter(checkList + addList):
             return 'GLY'
-        if collections.Counter(['N','CA','C','O','CB']) == collections.Counter(checkList):
+        if collections.Counter(['N', 'CA', 'C', 'O', 'CB']) == collections.Counter(checkList + addList):
             return 'ALA'
         for AA in self.AAs:
-            if collections.Counter(self.AAs[AA] + ['N','CA','C','O','CB']) == collections.Counter(checkList):
+            # print(self.AAs[AA] + ['N', 'CA', 'C', 'O', 'CB'])
+            # print(checkList + addList)
+            # print()
+            if collections.Counter(self.AAs[AA] + ['N', 'CA', 'C', 'O', 'CB']) == collections.Counter(checkList + addList):
                 return AA
         return "Unknown residue"
-
 

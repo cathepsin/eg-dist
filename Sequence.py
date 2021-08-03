@@ -22,6 +22,22 @@ class ProteinSequence:
             self.atoms = atomList
             self.residue = cName
             self.chain = ch
+            self.rotation = dict()
+            for atom in self.atoms:
+                print("Residue: ", atom.residue, " and ", self.residue)
+                if atom.residue != self.residue:
+                    if not atom.residue in self.rotation:
+                        self.rotation[atom.residue] = list()
+                    self.rotation[atom.residue].append(atom)
+            for key in self.rotation:
+                for atom in self.rotation[key]:
+                    self.atoms.remove(atom)
+            self.specialAtoms = list()
+            for atom in self.atoms:
+                if atom.id.upper().find('X') != -1:
+                    self.specialAtoms.append(atom)
+            for atom in self.specialAtoms:
+                self.atoms.remove(atom)
 
         def __lt__(self, other):
             return self.num < other.num
@@ -80,7 +96,7 @@ class ProteinSequence:
                 #Check if the current ATOM is on a new residue
                 if resNum != currResNum:
                     #Found the next residue, so save previously recorded data as an AminoAcid
-                    self.sequence.append(self.AminoAcid(currResNum, atomGroup.copy(), residue, chain))
+                    self.sequence.append(self.AminoAcid(currResNum, atomGroup.copy(), atomGroup[0].residue, chain))
                     currResNum = resNum
                     atomGroup.clear()
                 #Parse ATOM data
@@ -97,7 +113,7 @@ class ProteinSequence:
                 atomGroup.append(newAtom)
                 #print(newAtom)
         #Save the final AminoAcid instance
-        self.sequence.append(self.AminoAcid(currResNum, atomGroup.copy(), residue, chain))
+        self.sequence.append(self.AminoAcid(currResNum, atomGroup.copy(), atomGroup[0].residue, chain))
 
 
 #ATOM   1895  CB  ILE B 954      32.149   7.481 198.133  1.00 89.00           C

@@ -1,3 +1,5 @@
+import numpy as np
+
 class ProteinSequence:
     #Extract all ATOM lines from a .pdb (or .ent) file. Data is stored as Atoms, AminoAcids
     class Atom:#Class to store information about an individual atom
@@ -15,6 +17,10 @@ class ProteinSequence:
             return f"ATOM: NUMBER: {self.num}, TAG: {self.id}, RESIDUE: {self.residue}, CHAIN: {self.chain}, COORDINATES: {self.location}, OCCUPANCY: {self.occupancy}, B_FACTOR: {self.bfactor}, ELEMENT: {self.element}"
         def __str__(self):
             return f"{self.id} {self.residue} {self.location}"
+        def __mul__(self, other):
+            arr = np.array([self.location[0],self.location[1],self.location[2], 1.])
+            print("Result: ", np.matmul(other, arr))
+            return np.matmul(other, arr)
 
     class AminoAcid:#Class to store information about a whole residue
         def __init__(self, numb, atomList, cName, ch):
@@ -119,3 +125,10 @@ class ProteinSequence:
 #ATOM   1895  CB  ILE B 954      32.149   7.481 198.133  1.00 89.00           C
 #ATOM      1  N   VAL A   1       6.204  16.869   4.854  1.00 49.05           N
 #0-4| 4-11 |11-16|16-20|20-22|22-27|27-38|38-46|46-55|  55-60|  60-73| 73-end
+
+    def GeneratePair(self, chainPairs, matrix):
+        for key in chainPairs:
+            for residue in self.sequence:
+                if residue.chain == key:
+                    print("wow")
+                    result = residue.atoms[0] * matrix

@@ -15,16 +15,16 @@ class Chain:
             chains[key].sort()
         return chains
 
-    # Some .pdb files contain a translation matrix to generate a full coiled-coil
+    # Some .pdb files contain a translation matrix to generate symmetry pairs
     def Symmetry(self, infile, sequence):
         foundRemark = False
+        mat = dict()
+        copyChains = list()
         for line in infile:
             if line.find('REMARK') == 0:
                 foundRemark = True
-                mat = dict()
             elif foundRemark == True:
                 break
-            copyChains = list()
             if line.find('REMARK 350 APPLY THE FOLLOWING TO CHAINS:') != -1:
                 spl = line.split()
                 for ch in reversed(spl):
@@ -44,3 +44,4 @@ class Chain:
                     line = next(infile)
         self.matrix = mat
         self.copyChains = copyChains
+

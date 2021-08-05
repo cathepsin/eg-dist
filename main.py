@@ -23,6 +23,8 @@ protSeq.parsePDB(f_p)
 seqChains = Chain.Chain(protSeq)
 f_p.seek(0)
 seqChains.Symmetry(f_p, protSeq)
+for key in seqChains.matrix:
+    protSeq.GeneratePair(seqChains.copyChains, seqChains.matrix[key])
 centroid = ResidueCentroid.CentroidFinder()
 rCentroids = []
 for aa in protSeq.sequence:

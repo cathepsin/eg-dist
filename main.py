@@ -10,8 +10,10 @@ from tkinter.filedialog import askopenfilename
 
 root = tk.Tk()
 root.withdraw()
-f_pdb = askopenfilename(title="Select a .pdb file", filetypes=[('Protein Database File', '*.pdb')
-    , ('Protein Database File (old)', '*.ent')])
+f_pdb = askopenfilename(title="Select a .pdb file", filetypes=[
+    ('Molecular Topology', '*.mmol')
+    , ('Protein Database File (old) (Not yet supported)', '*.ent')
+    , ( 'Protein Database File (Not yet supported)', '*.pdb')])
 
 try:
     f_p = open(f_pdb)
@@ -31,15 +33,14 @@ for aa in protSeq.sequence:
     rCentroids.append(centroid.GetCentroid(aa))
 
 pmt = "Select associated .socket file for " + fpt.CutPath(f_pdb)
-f_sock = askopenfilename(title=pmt, filetypes=[('Socket File', '*.socket')])
+f_sock = askopenfilename(title=pmt, filetypes=[('Socket File', '*.short.socket')])
 try:
     f_s = open(f_sock)
 except FileNotFoundError:
     sys.exit("Must select a file")
-
 heptad = HeptadRepeat.Heptad()
 heptad.ParseSocket(f_s)
-
+#TODO Take centroid of only the helices. No need to calculate centroid of other residues.
 distances = EGDist.EGDist()
 distances.GetDistances(protSeq.sequence, seqChains, rCentroids, heptad)
 # print(protSeq.GetAtomDist(protSeq.sequence[14].atoms[1], protSeq.sequence[128].atoms[1]))

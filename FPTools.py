@@ -1,4 +1,5 @@
-def fStobS(fp):
+# Converts backslashes to forward slashes. Allows filepath lookup in linux and windows as needed
+def bStofS(fp):
     retFP = ""
     for i in range(len(fp)):
         if fp[i] == "\\":
@@ -10,8 +11,9 @@ def fStobS(fp):
 
     return retFP
 
+
+# Cuts the file path from a file name
 def CutPath(str):
-    # Cuts the file path from a file name
     retStr = str
     while retStr.find('/') != -1:
         retStr = retStr[retStr.find('/') + 1:]

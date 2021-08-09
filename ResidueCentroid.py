@@ -32,6 +32,9 @@ class CentroidFinder:
         self.stored = []
 
     def GetCentroid(self, residue):
+        if residue.rotation:
+            #TODO deal with rotamers
+            return float('NaN')
         x = 0
         y = 0
         z = 0
@@ -53,7 +56,7 @@ class CentroidFinder:
         x = x / n
         y = y / n
         z = z / n
-        return residue, [x, y, z]
+        return [x, y, z]
 
     #Unfortunately, some PDB files have incorrect data
     #Determine what residue res is from its ATOM data

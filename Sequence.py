@@ -32,6 +32,7 @@ class ProteinSequence:
             self.chain = ch
             self.rotation = dict()
             self.SetSpecials()
+            self.assignment = 'none'
 
         #Organizes special atoms and residues with non-1 occupancy
         def SetSpecials(self):
@@ -50,6 +51,9 @@ class ProteinSequence:
             for atom in self.specialAtoms:
                 self.atoms.remove(atom)
 
+        def SetCentroid(self, centr):
+            self.centroid = centr
+
         #AminoAcid dunder methods
         def __lt__(self, other):
             return self.num < other.num
@@ -58,7 +62,7 @@ class ProteinSequence:
             return f"RESIDUE: {self.residue}, NUMBER: {self.num}, CHAIN: {self.chain}"
 
         def __str__(self):
-            return f"{self.residue} {self.num} {self.chain}"
+            return f"{self.residue} {self.num} {self.chain} {self.assignment}"
 
 
 

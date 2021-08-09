@@ -8,17 +8,23 @@ import tkinter as tk
 import sys
 from tkinter.filedialog import askopenfilename
 
-root = tk.Tk()
-root.withdraw()
-f_pdb = askopenfilename(title="Select a .pdb file", filetypes=[
+ACCEPTED_FILES = [
     ('Molecular Topology', '*.mmol')
     , ('Protein Database File (old) (Not yet supported)', '*.ent')
-    , ( 'Protein Database File (Not yet supported)', '*.pdb')])
+    , ( 'Protein Database File (Not yet supported)', '*.pdb')
+]
+ACCEPTED_SOCKET = [('Socket File', '*.short.socket')]
+ERROR_MESSAGE = "Must select a file"
+PDB_PROMPT = "Select a .pdb file"
+
+root = tk.Tk()
+root.withdraw()
+f_pdb = askopenfilename(title=PDB_PROMPT, filetypes=ACCEPTED_FILES)
 
 try:
     f_p = open(f_pdb)
 except FileNotFoundError:
-    sys.exit("Must select a file")
+    sys.exit(ERROR_MESSAGE)
 
 protSeq = Sequence.ProteinSequence()
 protSeq.parsePDB(f_p)
@@ -27,21 +33,22 @@ f_p.seek(0)
 seqChains.Symmetry(f_p, protSeq)
 for key in seqChains.matrix:
     protSeq.GeneratePair(seqChains.copyChains, seqChains.matrix[key])
-centroid = ResidueCentroid.CentroidFinder()
-rCentroids = []
-for aa in protSeq.sequence:
-    rCentroids.append(centroid.GetCentroid(aa))
-
 pmt = "Select associated .socket file for " + fpt.CutPath(f_pdb)
-f_sock = askopenfilename(title=pmt, filetypes=[('Socket File', '*.short.socket')])
+f_sock = askopenfilename(title=pmt, filetypes=ACCEPTED_SOCKET)
 try:
     f_s = open(f_sock)
 except FileNotFoundError:
-    sys.exit("Must select a file")
+    sys.exit(ERROR_MESSAGE)
 heptad = HeptadRepeat.Heptad()
 heptad.ParseSocket(f_s)
-#TODO Take centroid of only the helices. No need to calculate centroid of other residues.
 distances = EGDist.EGDist()
-distances.GetDistances(protSeq.sequence, seqChains, rCentroids, heptad)
-# print(protSeq.GetAtomDist(protSeq.sequence[14].atoms[1], protSeq.sequence[128].atoms[1]))
+distances.GetRangeSequence(heptad.heptadInfo, seqChains)
+
+centroid = ResidueCentroid.CentroidFinder()
+rCentroids = []
+for helix in distances.helices:
+    for aa in helix:
+        aa.SetCentroid(centroid.GetCentroid(aa))
+
+distances.GetDistances()
 print("Done")

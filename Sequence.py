@@ -1,8 +1,10 @@
 import numpy as np
 
 class ProteinSequence:
+    NMR_WARNING = "The selected file contains multiple model builds. Only the first will be considered for calculations."
     def __init__(self):
         self.sequence = []
+        self.warning = ""
 
     class Atom:#Class to store information about an individual atom
         def __init__(self, num, coord, tag, res, ch, occ, bf, ele):
@@ -53,6 +55,10 @@ class ProteinSequence:
 
         def SetCentroid(self, centr):
             self.centroid = centr
+            for atom in self.atoms:
+                if atom.id == 'CA':
+                    self.vector = [centr[0] - atom.location[0], centr[1] - atom.location[1], centr[2] - atom.location[2]]
+                    break
 
         #AminoAcid dunder methods
         def __lt__(self, other):
@@ -101,6 +107,10 @@ class ProteinSequence:
         currResNum = -1
         atomGroup = []
         for line in file:
+            if line.find("ENDMDL") == 0:
+                # TODO Deal with multimodeled files. Common in NMR structures
+                self.warning += self.NMR_WARNING
+                break
             if line.find("ATOM") == 0:
                 spl = self.strToList(line)
                 resNum = int(line[22:27])

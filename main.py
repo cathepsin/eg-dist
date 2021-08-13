@@ -7,6 +7,7 @@ import FPTools as fpt
 import tkinter as tk
 import sys
 from tkinter.filedialog import askopenfilename
+import ntpath
 
 ACCEPTED_FILES = [
     ('Molecular Topology', '*.mmol')
@@ -51,4 +52,11 @@ for helix in distances.helices:
         aa.SetCentroid(centroid.GetCentroid(aa))
 
 distances.GetDistances()
+
+#TODO get oligomeric state for csv
+print(ntpath.basename(f_p.name))
+outfile = open(ntpath.basename(f_p.name) + ".csv", "w")
+outfile.write("Protein from " + ntpath.basename(f_p.name) + ",\n")
+outfile.write("Pairs:,CA,CB,Centroid,\n")
 print("Done")
+outfile.close()

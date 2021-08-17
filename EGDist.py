@@ -1,3 +1,5 @@
+import math
+
 import HeptadRepeat as HR
 import operator
 
@@ -9,6 +11,9 @@ class EGDist:
 
         def setVD(self, val):
             self.zdist = val
+
+        def setXInt(self, xint):
+            self.x_int = xint
 
         def __eq__(self, other):
             if isinstance(self, type(other)):
@@ -77,7 +82,9 @@ class EGDist:
                 else:
                     print(self.pairs.count(self.AAPair(pair[0], pair[1])))
                     self.pairs.append(self.AAPair(pair[0], pair[1]))
-                self.pairs[len(self.pairs) - 1].setVD(self.VectorPair(pair[0], pair[1]))
+                vp = self.VectorPair(pair[0], pair[1])
+                self.pairs[len(self.pairs) - 1].setVD(vp[0])
+                self.pairs[len(self.pairs) - 1].setXInt(vp[1])
         self.FilterPairs()
 
 
@@ -87,13 +94,13 @@ class EGDist:
         minAA = None
         for helix in exclusion:
             for aa in [aa for aa in helix if aa.assignment != residue.assignment ]:
-                if self.CentroidDist(residue.centroid, aa.centroid) < minDist:
-                    minDist = self.CentroidDist(residue.centroid, aa.centroid)
+                if self.GetSimpleDist(residue.centroid, aa.centroid) < minDist:
+                    minDist = self.GetSimpleDist(residue.centroid, aa.centroid)
                     minAA = aa
         return [residue, minAA]
 
-    def CentroidDist(self, cen1, cen2):
-        return ((cen1[0] - cen2[0])**2 + (cen1[1] - cen2[1])**2 + (cen1[2] - cen2[2])**2)** (1/2)
+    def GetSimpleDist(self, ob1, ob2):
+        return ((ob1[0] - ob2[0])**2 + (ob1[1] - ob2[1])**2 + (ob1[2] - ob2[2])**2)** (1/2)
 
     def GetRangeSequence(self, helices, chain):
         self.helices = list()
@@ -124,7 +131,7 @@ class EGDist:
         # Intersection point
         #
         #               y_2 - y_1 + m_1x_1 - m_2x_2
-        #   x_int =  --------------------------
+        #   x_int =    ------------------------------
         #                       m_1 - m_2
 
         x_int = (res2.centroid[1] - res1.centroid[1] + m1 * res1.centroid[0] - m2 * res2.centroid[0]) / (m1 - m2)
@@ -136,20 +143,45 @@ class EGDist:
         #           a
         z1 = (x_int - res1.centroid[0])/res1.vector[0] * res1.vector[2] + res1.centroid[2]
         z2 = (x_int - res2.centroid[0]) / res2.vector[0] * res2.vector[2] + res2.centroid[2]
-        return abs(z1 - z2)
+        return abs(z1 - z2), x_int
 
     def FilterPairs(self):
         newList = list()
         for val in self.pairs:
             if self.pairs.count(val) > 1 and val not in newList:
+                angels = self.CheckVectorAngle(val)
+                self.CheckVectorDirection(val)
                 newList.append(val)
         self.pairs = newList
+
         print("clean")
 
-    def CheckVectorAngle(self, CA_interest, CA_other, x_int):
-        #TODO Check the angle <CA1,CA2,x_int. If obtuse, throw out the pairing
-        print("stub")
+    def CheckVectorAngle(self, pair):
+        #TODO Check the angle <CA1,CA2,Cent2 and <CA2, CA1, Cent1. If obtuse, throw out the pairing
+        ca1 = None
+        ca2 = None
+        for atom in pair.e.atoms:
+            if atom.id == 'CA':
+                ca1 = atom
+                break
+        for atom in pair.g.atoms:
+            if atom.id == 'CA':
+                ca2 = atom
+                break
+        #<<CA1,CA2,Cent2
+        lA1 = self.GetSimpleDist(ca1.location, ca2.location)
+        lB1 = self.GetSimpleDist(ca2.location, pair.g.centroid)
+        lC1 = self.GetSimpleDist(ca1.location, pair.g.centroid)
+        theta1 = math.acos((lA1**2 + lB1**2 - lC1**2)/ (2 * lA1 * lB1))
 
-    def CheckVectorDirection(self):
+        # <<CA2,CA1,Cent1
+        lA2 = self.GetSimpleDist(ca2.location, ca1.location)
+        lB2 = self.GetSimpleDist(ca1.location, pair.e.centroid)
+        lC2 = self.GetSimpleDist(ca2.location, pair.e.centroid)
+        theta2 = math.acos((lA2**2 + lB2**2 - lC2**2)/ (2 * lA2 * lB2))
+        return theta1, theta2
+
+    def CheckVectorDirection(self, pair):
         #TODO Determine if a vector must be multiplied by a negative scaler to reach the x_int. If so, throw out the pairing
+
         print("stub")

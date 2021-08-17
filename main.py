@@ -13,11 +13,24 @@ from tkinter.filedialog import askopenfilename
 import ntpath
 import signal
 
+ACCEPTED_EXTENSIONS = [".mmol", ".ent", "pdb", ".short.socket"]
+def CheckExtensions(val):
+    for ext in ACCEPTED_EXTENSIONS:
+        loc = val.find(ext)
+        if val[loc:] == ext:
+            return True
+    return False
+
+
+
+
 
 currdir = os.getcwd()
 def signal_handler(signal, frame):
     os.chdir(currdir)
     print(os.getcwd())
+    print("here")
+    sys.exit(-1)
 signal.signal(signal.SIGINT, signal_handler)
 
 
@@ -27,29 +40,35 @@ ACCEPTED_FILES = [
     , ( 'Protein Database File (Not yet supported)', '*.pdb')
 ]
 ACCEPTED_SOCKET = [('Socket File', '*.short.socket')]
+
 ERROR_MESSAGE = "Must select a file"
 PDB_PROMPT = "Select a .pdb file"
 
 try:
-    if sys.argv[1] == "-file":
-        print("give me two files!")
-    elif sys.argv[1] == "-dir":
-        if not os.path.isdir(sys.argv[2]):
-            raise CustomExceptions.NotDirectory
-        print("give me a directory")
-        filemanager.GetFileList(sys.argv[2])
-        filemanager.Organize()
-    else:
+    if len(sys.argv) == 1:
         print("tkinter")
         root = tk.Tk()
         root.withdraw()
         f_pdb = askopenfilename(title=PDB_PROMPT, filetypes=ACCEPTED_FILES)
         pmt = "Select associated .socket file for " + fpt.CutPath(f_pdb)
         f_sock = askopenfilename(title=pmt, filetypes=ACCEPTED_SOCKET)
-        #TODO create a directory and work with this.
+        filelist = [filemanager.TwoFiles(f_pdb, f_sock)]
+    elif sys.argv[1] == "-file":
+        print("give me two files!")
+        if CheckExtensions(sys.argv[2]) and CheckExtensions(sys.argv[3]):
+            if sys.argv[2].endswith(".short.socket") or sys.argv[3].endswith(".short.socket") and not (sys.argv[2].endswith(".short.socket") and sys.argv[3].endswith(".short.socket")):
+                print(sys.argv[2], sys.argv[3])
+                filelist = [filemanager.TwoFiles(sys.argv[2], sys.argv[3])]
+    elif sys.argv[1] == "-dir":
+        if not os.path.isdir(sys.argv[2]):
+            raise CustomExceptions.NotDirectory
+        print("give me a directory")
+        filemanager.GetFileList(sys.argv[2])
+        filemanager.Organize()
+        filelist = [file for file in os.listdir() if os.path.isdir(file)]
 
-
-    for file in [file for file in os.listdir() if os.path.isdir(file)]:
+    for file in filelist:
+        print(os.path.join(os.getcwd(), file))
         os.chdir(os.path.join(os.getcwd(), file))
         for ptr in os.listdir():
             if ptr.find(".socket") == -1:

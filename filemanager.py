@@ -6,10 +6,10 @@ def GetFileList(dir):
 
 def Organize():
     for file in [file for file in os.listdir() if file.rfind('.') != -1]:
-        if not os.path.isdir(file[:file.rfind('.')]):
-            os.mkdir(file[:file.rfind('.')])
+        if not os.path.isdir(file[:file.find('.')]):
+            os.mkdir(file[:file.find('.')])
         currDir = os.getcwd()
-        os.chdir(os.path.join(os.getcwd(), file[:file.rfind('.')]))
+        os.chdir(os.path.join(os.getcwd(), file[:file.find('.')]))
         shutil.move(os.path.join(currDir, file), os.getcwd())
         print(os.getcwd())
         os.chdir("..")
@@ -26,5 +26,3 @@ def TwoFiles(f1, f2):
         shutil.copy(f2, os.getcwd())
     os.chdir("..")
     return f1[:f1.rfind(".")] + " eg-dist"
-
-

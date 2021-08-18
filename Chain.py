@@ -46,4 +46,3 @@ class Chain:
                     line = next(infile)
         self.matrix = mat
         self.copyChains = copyChains
-

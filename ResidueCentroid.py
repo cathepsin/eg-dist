@@ -108,5 +108,3 @@ class CentroidFinder:
         for atom in [atom for atom in res.atoms if "H" not in atom.element]:
             checkList.append(atom.id)
         return checkList, addList
-
-

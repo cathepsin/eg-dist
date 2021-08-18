@@ -88,6 +88,9 @@ class EGDist:
                 newPair.setGPoint(vp[2])
                 self.pairs.append(newPair)
         self.FilterPairs()
+        return {"CA":self.GetCAAverage(),
+                "CB":self.GetCBAverage(),
+                "Centroid":self.GetCentAverage()}
 
     def GetPair(self, residue, exclusion):
         minDist = float('inf')
@@ -115,16 +118,8 @@ class EGDist:
 
     def VectorPair(self, res1, res2):
         # Slope of line made from CA --> CENTROID
-        CA1 = None
-        for atom in res1.atoms:
-            if atom.id == 'CA':
-                CA1 = atom
-                break
-        CA2 = None
-        for atom in res2.atoms:
-            if atom.id == 'CA':
-                CA2 = atom
-                break
+        CA1 = self.GetCA(res1)
+        CA2 = self.GetCA(res2)
         # XY orthogonal projection
         m1 = (res1.centroid[1] - CA1.location[1]) / (res1.centroid[0] - CA1.location[0])
         m2 = (res2.centroid[1] - CA2.location[1]) / (res2.centroid[0] - CA2.location[0])
@@ -154,25 +149,17 @@ class EGDist:
         newList = list()
         for val in self.pairs:
             if self.pairs.count(val) > 1 and val not in newList:
-                angels = self.CheckVectorAngle(val)
-                self.CheckVectorDirection(val)
-                newList.append(val)
+                if self.CheckVectorAngle(val) and self.CheckVectorDirection(val):
+                    newList.append(val)
+                else:
+                    print("debug")
+            else:
+                print("debug")
         self.pairs = newList
 
-        print("clean")
-
     def CheckVectorAngle(self, pair):
-        # TODO Check the angle <CA1,CA2,Cent2 and <CA2, CA1, Cent1. If obtuse, throw out the pairing
-        ca1 = None
-        ca2 = None
-        for atom in pair.e.atoms:
-            if atom.id == 'CA':
-                ca1 = atom
-                break
-        for atom in pair.g.atoms:
-            if atom.id == 'CA':
-                ca2 = atom
-                break
+        ca1 = self.GetCA(pair.e)
+        ca2 = self.GetCA(pair.g)
         # <<CA1,CA2,Cent2
         lA1 = self.GetSimpleDist(ca1.location, ca2.location)
         lB1 = self.GetSimpleDist(ca2.location, pair.g.centroid)
@@ -183,8 +170,9 @@ class EGDist:
         lB2 = self.GetSimpleDist(ca1.location, pair.e.centroid)
         lC2 = self.GetSimpleDist(ca2.location, pair.e.centroid)
         theta2 = math.acos((lA2 ** 2 + lB2 ** 2 - lC2 ** 2) / (2 * lA2 * lB2))
-        #TODO Edit return value
-        return theta1, theta2
+        if math.degrees(theta1) > 90 or math.degrees(theta2) > 90:
+            return False
+        return True
 
     def CheckVectorDirection(self, pair):
         eVect = [pair.EPoint[0] - pair.e.centroid[0], pair.EPoint[1] - pair.e.centroid[1],
@@ -194,3 +182,50 @@ class EGDist:
         if (np.signbit(eVect).tolist() == (~np.signbit(pair.e.vector)).tolist()) or (np.signbit(gVect).tolist() == (~np.signbit(pair.g.vector)).tolist()):
             return False
         return True
+
+    def GetCA(self, res):
+        for atom in res.atoms:
+            if atom.id == 'CA':
+                return atom
+
+    def GetCB(self, res):
+        for atom in res.atoms:
+            if atom.id == 'CB':
+                return atom
+
+    def GetCAAverage(self):
+        n = 0
+        dist = 0
+        for pair in self.pairs:
+            dist += self.GetSimpleDist(self.GetCA(pair.e).location, self.GetCA(pair.g).location)
+            n += 1
+            print(pair)
+        if n != 0:
+            return dist / n
+        else:
+            return "-1"
+
+
+    def GetCBAverage(self):
+        n = 0
+        dist = 0
+        for pair in self.pairs:
+            dist += self.GetSimpleDist(self.GetCB(pair.e).location, self.GetCB(pair.g).location)
+            n += 1
+            print(pair)
+        if n != 0:
+            return dist / n
+        else:
+            return "-1"
+
+    def GetCentAverage(self):
+        n = 0
+        dist = 0
+        for pair in self.pairs:
+            dist += self.GetSimpleDist(pair.e.centroid, pair.g.centroid)
+            n += 1
+            print(pair)
+        if n != 0:
+            return dist / n
+        else:
+            return "-1"

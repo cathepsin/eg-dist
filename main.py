@@ -16,14 +16,10 @@ import signal
 ACCEPTED_EXTENSIONS = [".mmol", ".ent", "pdb", ".short.socket"]
 def CheckExtensions(val):
     for ext in ACCEPTED_EXTENSIONS:
-        loc = val.find(ext)
-        if val[loc:] == ext:
+        loc = val.endswith(ext)
+        if loc:
             return True
     return False
-
-
-
-
 
 currdir = os.getcwd()
 def signal_handler(signal, frame):
@@ -71,9 +67,9 @@ try:
         print(os.path.join(os.getcwd(), file))
         os.chdir(os.path.join(os.getcwd(), file))
         for ptr in os.listdir():
-            if ptr.find(".socket") == -1:
+            if CheckExtensions(ptr) and not ptr.endswith(".short.socket"):
                 f_pdb = ptr
-            else:
+            elif ptr.endswith(".short.socket"):
                 f_sock = ptr
 
     #f_pdb = askopenfilename(title=PDB_PROMPT, filetypes=ACCEPTED_FILES)
@@ -107,13 +103,14 @@ try:
             for aa in helix:
                 aa.SetCentroid(centroid.GetCentroid(aa))
 
-        distances.GetDistances()
+        dist = distances.GetDistances()
 
         #TODO get oligomeric state for csv
         print(ntpath.basename(f_p.name))
         outfile = open(ntpath.basename(f_p.name) + ".csv", "w")
         outfile.write("Protein from " + ntpath.basename(f_p.name) + ",\n")
         outfile.write("Pairs:,CA,CB,Centroid,\n")
+        outfile.write("," + str(dist["CA"]) + "," + str(dist["CB"]) + "," + str(dist["Centroid"]) + ",\n")
         print("Done")
         outfile.close()
         os.chdir("..")

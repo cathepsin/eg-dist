@@ -111,8 +111,8 @@ class ProteinSequence:
                 # TODO Deal with multimodeled files. Common in NMR structures
                 self.warning += self.NMR_WARNING
                 break
+            #TODO HETATOM parsing...
             if line.find("ATOM") == 0:
-                spl = self.strToList(line)
                 resNum = int(line[22:27])
                 if currResNum == -1:
                     #Not all files start at residue 0 or 1. This ensures correct starting position

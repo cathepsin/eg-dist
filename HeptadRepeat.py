@@ -54,10 +54,16 @@ class Heptad:
         lines[0] = lines[0].replace(':',' ')
         firstline = lines[0].split()
         chain = firstline[len(firstline) - 1]
-        range = [int(firstline[len(firstline) - 3]), int(firstline[len(firstline) - 2])]
+        try:
+            range = [int(firstline[len(firstline) - 3]), int(firstline[len(firstline) - 2])]
+        except ValueError:
+            range = [int(firstline[len(firstline) - 2]), int(firstline[len(firstline) - 1])]
         sequence = lines[2].split()[1]
         lines[3] = lines[3].replace(' ', '-').replace('-',' ',1)
         register = lines[3].split()[1]
+
+        if chain == str(range[1]):
+            chain = "$"
         return chain, range, sequence, register
 
     #AminoAcids getter

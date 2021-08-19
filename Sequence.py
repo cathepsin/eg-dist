@@ -112,7 +112,7 @@ class ProteinSequence:
                 self.warning += self.NMR_WARNING
                 break
             #TODO HETATOM parsing...
-            if line.find("ATOM") == 0:
+            if line.find("ATOM") == 0 or line.find("HETATM") == 0 and line.find("HOH") == -1:
                 resNum = int(line[22:27])
                 if currResNum == -1:
                     #Not all files start at residue 0 or 1. This ensures correct starting position
@@ -124,14 +124,16 @@ class ProteinSequence:
                     currResNum = resNum
                     atomGroup.clear()
                 #Parse ATOM data
-                num = int(line[4:11])
+                num = int(line[6:11])
                 tag = line[11:16].strip()
                 residue = line[16:20].strip()
                 chain = line[20:22].strip()
+                if chain == "":
+                    chain = "$"
                 coordinates = [float(line[27:38]),float(line[38:46]),float(line[46:55])]
                 occupancy = float(line[55:60])
-                bfactor = float(line[60:73])
-                element = line[73:].strip()
+                bfactor = float(line[60:67])
+                element = line[77:].strip()
                 #Save atom
                 newAtom = self.Atom(num, coordinates, tag, residue, chain, occupancy, bfactor, element)
                 atomGroup.append(newAtom)

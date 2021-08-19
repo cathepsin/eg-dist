@@ -96,6 +96,7 @@ class CentroidFinder:
                     ca = atom
                 elif atom.id == 'CB':
                     return atom.location
+            #TODO find out what is wrong with 1eum
             return ca.location
 
     def GetLists(self, res):

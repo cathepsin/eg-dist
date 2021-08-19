@@ -75,6 +75,8 @@ class EGDist:
             exclusionList = [hel for hel in self.helices if hel != helix]
             for residue in helix:
                 pair = self.GetPair(residue, exclusionList)
+                if pair[0].residue == "GLY" or pair[1].residue == "GLY":
+                    continue
                 if pair[0].assignment == 'g':
                     print(self.pairs.count(self.AAPair(pair[1], pair[0])))
                     vp = self.VectorPair(pair[1], pair[0])

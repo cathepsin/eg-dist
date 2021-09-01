@@ -29,28 +29,26 @@ class CentroidFinder:
             "TYR": ['CG', 'CD1', 'CD2', 'CE1', 'CE2', 'CZ', 'OH'],
             "TRP": ['CG', 'CD1', 'CD2', 'NE1', 'CE2', 'CE3', 'CZ2', 'CZ3', 'CH2']
         }
-        self.warning = ""
+        self.message = ""
 
+    #Get the centroid of a residue
     def GetCentroid(self, residue):
         if residue.rotation:
-            #TODO deal with rotamers
-            self.warning += f"Residue {residue} has a decimal occupancy. Its centroid cannot be determined"
+            self.message += f"Residue {residue} has a decimal occupancy. Its centroid cannot be determined\n"
             return float('NaN')
         x = 0
         y = 0
         z = 0
         n = 0
-        # Because, unfortunately, some pdb files have incorrectly labled residues, we must check (as in residue 1340 in 1PL5)
+        # Some pdb files have incorrectly labeled or incomplete residues
         # This causes the method to be relatively slow, but ensures correctness
         resName = self.CheckResidue(residue)
-        if resName != residue.residue and resName != "Unknown residue":
-            print("Uh oh! Somebody made a bad file! ", residue.residue, "-->", resName, "(", residue.num, ")")
-        elif resName == "Unknown residue":
-            #Either a mistake in the protein file or simplified.
-            self.warning += f"Residue {residue} could not be identified from its ATOM listings. The centroid will be " \
-                            f"determined using available ATOMS"
-            print("Unknown residue")
+        if resName == "Unknown residue":
+            #Either a mistake in the protein file or incomplete.
+            self.message += f"Residue {residue} could not be identified from its ATOM listings. The centroid will be " \
+                            f"determined using available ATOMS\n"
             return self.UnknownCentroid(residue)
+        #Calculate centorid from selected atoms
         for atom in residue.atoms:
             if atom.id in self.AAs[resName]:
                 n = n + 1
@@ -59,7 +57,6 @@ class CentroidFinder:
                 z = z + atom.location[2]
         return [x/n, y/n, z/n]
 
-    #Unfortunately, some PDB files have incorrect data
     #Determine what residue res is from its ATOM data
     def CheckResidue(self, res):
         checkList, addList = self.GetLists(res)
@@ -75,7 +72,6 @@ class CentroidFinder:
     #Get all atoms that are not hydrogen. If possible, don't include CA or CB
     def UnknownCentroid(self, res):
         checkList, addList = self.GetLists(res)
-        print("here")
         x = 0
         y = 0
         z = 0
@@ -96,9 +92,9 @@ class CentroidFinder:
                     ca = atom
                 elif atom.id == 'CB':
                     return atom.location
-            #TODO find out what is wrong with 1eum
             return ca.location
 
+    #Get atoms. PDB files form NMR data contain hydrogens. These are omitted
     def GetLists(self, res):
         checkList = []
         addList = []

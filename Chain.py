@@ -3,6 +3,7 @@ import numpy as np
 class Chain:
     def __init__(self, sequence):
         self.chains = self.MakeChains(sequence)
+        self.message = ""
 
     #Scan sequence and organize pointers to each residue into grouped chains
     def MakeChains(self, sequence):

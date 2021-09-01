@@ -1,10 +1,10 @@
 import numpy as np
+from string import ascii_letters
 
 class ProteinSequence:
-    NMR_WARNING = "The selected file contains multiple model builds. Only the first will be considered for calculations."
     def __init__(self):
         self.sequence = []
-        self.warning = ""
+        self.message = ""
 
     class Atom:#Class to store information about an individual atom
         def __init__(self, num, coord, tag, res, ch, occ, bf, ele):
@@ -16,6 +16,11 @@ class ProteinSequence:
             self.element = ele
             self.residue = res
             self.chain = ch
+            self.hetatm = False
+
+        #If a HETRATM
+        def het(self, bl):
+            self.hetatm = bl
 
         #ATOM dunder methods
         def __repr__(self):
@@ -53,53 +58,24 @@ class ProteinSequence:
             for atom in self.specialAtoms:
                 self.atoms.remove(atom)
 
+        #Set the centroid and the centroidal vector (CA-->Cent) for a residue
         def SetCentroid(self, centr):
             self.centroid = centr
             for atom in self.atoms:
                 if atom.id == 'CA':
-                    self.vector = [centr[0] - atom.location[0], centr[1] - atom.location[1], centr[2] - atom.location[2]]
-                    break
+                    try:
+                        self.vector = [centr[0] - atom.location[0], centr[1] - atom.location[1], centr[2] - atom.location[2]]
+                        break
+                    except TypeError:
+                        self.vector = "Bad"
 
         #AminoAcid dunder methods
         def __lt__(self, other):
             return self.num < other.num
-
         def __repr__(self):
             return f"RESIDUE: {self.residue}, NUMBER: {self.num}, CHAIN: {self.chain}"
-
         def __str__(self):
             return f"{self.residue} {self.num} {self.chain} {self.assignment}"
-
-
-
-    #Split an ATOM line into a list
-    def strToList(self, str):
-        retLst = str.split()
-        if len(retLst[2]) > 4:
-            #If an ATOM tag is 4+ characters, str.split() will not work as intended
-            retLst = self.cleanLargeTag(str)
-        if len(retLst[9]) > 4:
-            #If an ATOM bfactor is 4+ characters, str.split() will not work as intended
-            retLst = self.cleanLargeBFactor(str)
-        return retLst
-
-    #Takes the original ATOM line (string) and splits the tag and residue correctly
-    def cleanLargeTag(self, str):
-        lst = str.split()
-        retlst = lst.copy()
-        retlst.insert(2,lst[2][:4])
-        retlst.insert(3,lst[2][4:])
-        retlst.remove(retlst[4])
-        return retlst
-
-    #Takes the original ATOM line (string) and splits the occupancy and bfactor correctly
-    def cleanLargeBFactor(self, str):
-        lst = str.split()
-        retlst = lst.copy()
-        retlst.insert(9,lst[9][:4])
-        retlst.insert(10,lst[9][4:])
-        retlst.remove(retlst[11])
-        return retlst
 
     #Parses a .pdb or .ent file. Returns an AA sequence.
     #Each residue is placed in the order they appear in the .pdb/.ent file
@@ -108,12 +84,10 @@ class ProteinSequence:
         atomGroup = []
         for line in file:
             if line.find("ENDMDL") == 0:
-                # TODO Deal with multimodeled files. Common in NMR structures
-                self.warning += self.NMR_WARNING
+                self.message += "The selected file contains multiple model builds. Only the first will be considered for calculations.\n"
                 break
-            #TODO HETATOM parsing...
             if line.find("ATOM") == 0 or line.find("HETATM") == 0 and line.find("HOH") == -1:
-                resNum = int(line[22:27])
+                resNum = int("".join(chr for chr in line[22:27] if chr.isdigit()))
                 if currResNum == -1:
                     #Not all files start at residue 0 or 1. This ensures correct starting position
                     currResNum = resNum
@@ -128,7 +102,7 @@ class ProteinSequence:
                 tag = line[11:16].strip()
                 residue = line[16:20].strip()
                 chain = line[20:22].strip()
-                if chain == "":
+                if chain == "": #A chain name is required for future logic. If no name is assigned, assign one
                     chain = "$"
                 coordinates = [float(line[27:38]),float(line[38:46]),float(line[46:55])]
                 occupancy = float(line[55:60])
@@ -136,10 +110,13 @@ class ProteinSequence:
                 element = line[77:].strip()
                 #Save atom
                 newAtom = self.Atom(num, coordinates, tag, residue, chain, occupancy, bfactor, element)
+                if line.find("HETATM") == 0:
+                    newAtom.het(True)
                 atomGroup.append(newAtom)
         #Save the final AminoAcid instance
         self.sequence.append(self.AminoAcid(currResNum, atomGroup.copy(), atomGroup[0].residue, chain))
 
+    #Generate symmatry pairs
     def GeneratePair(self, chainPairs, matrix):
         self.symmetryPairs = list()
         for key in chainPairs:
@@ -149,6 +126,5 @@ class ProteinSequence:
                     for atom in residue.atoms:
                         newAtom = self.Atom(atom.num, atom * matrix, atom.id, atom.residue, atom.chain + atom.chain, atom.occupancy, atom.bfactor, atom.element)
                         atomGroup.append(newAtom)
-                    #result = residue.atoms[0] * matrix
                     newRes = self.AminoAcid(residue.num, atomGroup, residue.residue, residue.chain)
                     self.symmetryPairs.append(newRes)

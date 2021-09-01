@@ -24,7 +24,8 @@ class Heptad:
             "W": 'TRP',
             "O": 'PYL'
         }
-
+        self.message = ""
+        self.oligomeric_state = "Unknown"
         self.heptadInfo = []
 
     #Parse a .short.socket file to extract information about a heptad repeat
@@ -32,6 +33,14 @@ class Heptad:
         rFile = file.readlines()
         i = 0
         while i < len(rFile):
+            #Get oligomeric state from .short.socket file. Gets only first instance of described oligomeric state
+            if rFile[i].find("stranded") != -1 and self.oligomeric_state == "Unknown":
+                for word in rFile[i].split():
+                    if word.find("stranded") != -1:
+                        self.oligomeric_state = word
+                        for i in range(len(self.oligomeric_state)):
+                            if not self.oligomeric_state[i].isalnum():
+                                self.oligomeric_state = self.oligomeric_state[:i] + " " + self.oligomeric_state[i + 1:]
             if rFile[i].find("assigning heptad to helix") == 0:
                 paragraph = ""
                 while rFile[i] != "\n":
@@ -45,7 +54,6 @@ class Heptad:
             if rFile[i].strip() == "Finished":
                 break
             i += 1
-
 
     #Get the entire paragraph containing the heptad repeat information for easier handling
     def ParseParagraph(self, para):
@@ -61,8 +69,7 @@ class Heptad:
         sequence = lines[2].split()[1]
         lines[3] = lines[3].replace(' ', '-').replace('-',' ',1)
         register = lines[3].split()[1]
-
-        if chain == str(range[1]):
+        if chain == str(range[1]):#If socket file was produced from pdf file with missing chain labels
             chain = "$"
         return chain, range, sequence, register
 

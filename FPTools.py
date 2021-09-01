@@ -8,7 +8,6 @@ def bStofS(fp):
             if (i == 0 or i == len(fp) - 1) and fp[i] == "\"":
                 continue
             retFP += fp[i]
-
     return retFP
 
 

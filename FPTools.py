@@ -10,7 +10,6 @@ def bStofS(fp):
             retFP += fp[i]
     return retFP
 
-
 # Cuts the file path from a file name
 def CutPath(str):
     retStr = str

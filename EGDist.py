@@ -174,8 +174,8 @@ class EGDist:
 
     #Get vector information for both residues
     #Returns the z-val differernce from the XY orthoginal projection of both vectors,
-    #xyz coordinates of the 3D recast for the first residue,
-    #and the xyz coordinates of the 3D recast for the second residue
+    #Returns the xyz coordinates of the 3D recast for the first residue,
+    #Returns the and the xyz coordinates of the 3D recast for the second residue
     def VectorPair(self, res1, res2):
         # Slope of line made from CA --> CENTROID
         CA1 = self.GetCA(res1)

@@ -17,7 +17,6 @@ from tkinter.filedialog import askopenfilename
 import FPTools as fpt
 import tkinter as tk
 
-import winsound
 import random
 
 #Check file. Return true if correct file extension

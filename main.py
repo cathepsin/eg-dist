@@ -20,9 +20,6 @@ import tkinter as tk
 import winsound
 import random
 
-
-winsound.Beep(8500, 10000)
-
 #Check file. Return true if correct file extension
 ACCEPTED_EXTENSIONS = [".mmol", ".ent", "pdb", ".short.socket"]
 def CheckExtensions(val):
